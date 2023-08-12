@@ -10,6 +10,7 @@ extern void moveMotorsForward();
 extern void moveMotorsBackward();
 extern void stopMotors();
 extern void detech_filament();
+extern void heatcoil();
 
 void setup() {
     Serial.begin(9600);
@@ -30,6 +31,9 @@ void setup() {
     pumpOff();
 
     pinMode(switchPin, INPUT_PULLUP);
+
+    pinMode(dimmerPin, OUTPUT);
+    analogWrite(dimmerPin, 0);
 }
  
 void loop() {
@@ -48,5 +52,6 @@ void loop() {
     delay(3000);
     stopMotors();
     detech_filament();
+    heatcoil();
     delay(1000);
 }

@@ -7,22 +7,22 @@ int text_number = 16;
 int line_number = 2;
 
 // Thermo couple
-#define ONE_WIRE_BUS_1 4
-#define ONE_WIRE_BUS_2 5 
-#define ONE_WIRE_BUS_3 6 
+#define ONE_WIRE_BUS_1 13
+#define ONE_WIRE_BUS_2 14
+#define ONE_WIRE_BUS_3 15
 
 uint32_t temperature_1;
 uint32_t temperature_2;
 uint32_t temperature_3;
 
 // Load cell
-#define DOUT_PIN  2
-#define SCK_PIN   3
+#define DOUT_PIN  11
+#define SCK_PIN   12
 
 float weight;
 
 // Pump
-#define pumpPin 9
+#define pumpPin 1
 
 // Motor 1
 #define motorA1 2
@@ -43,3 +43,7 @@ float weight;
 // Filament detector
 #define switchPin 2
 int switchState;
+
+// Heat coil
+#define dimmerPin 10
+int dutyCycle;
