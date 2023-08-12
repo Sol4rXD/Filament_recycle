@@ -55,18 +55,44 @@ void pumpOff() {
 void moveMotorsForward() {
   digitalWrite(motorA1, HIGH);
   digitalWrite(motorA2, LOW);
+  digitalWrite(motorB1, HIGH);
+  digitalWrite(motorB2, LOW);
+  digitalWrite(motorC1, HIGH);
+  digitalWrite(motorC2, LOW);
+  digitalWrite(motorD1, HIGH);
+  digitalWrite(motorD2, LOW);
 }
 
 void moveMotorsBackward() {
   digitalWrite(motorA1, LOW);
   digitalWrite(motorA2, HIGH);
+  digitalWrite(motorB1, LOW);
+  digitalWrite(motorB2, HIGH);
+  digitalWrite(motorC1, LOW);
+  digitalWrite(motorC2, HIGH);
+  digitalWrite(motorD1, LOW);
+  digitalWrite(motorD2, HIGH);
 }
 
 void stopMotors() {
   digitalWrite(motorA1, LOW);
   digitalWrite(motorA2, LOW);
+  digitalWrite(motorB1, LOW);
+  digitalWrite(motorB2, LOW);
+  digitalWrite(motorC1, LOW);
+  digitalWrite(motorC2, LOW);
+  digitalWrite(motorD1, LOW);
+  digitalWrite(motorD2, LOW);
+}
+
+void detech_filament() {
+  switchState = digitalRead(switchPin);
+  if (switchState == LOW) {
+    Serial.println("Switch is pressed"); 
+  } else {
+    Serial.println("Switch is not pressed"); 
+  }
 }
 
 // Heatcoil
 
-// Filament detector

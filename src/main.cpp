@@ -9,6 +9,7 @@ extern void pumpOff();
 extern void moveMotorsForward();
 extern void moveMotorsBackward();
 extern void stopMotors();
+extern void detech_filament();
 
 void setup() {
     Serial.begin(9600);
@@ -27,6 +28,8 @@ void setup() {
 
     pinMode(pumpPin, OUTPUT);
     pumpOff();
+
+    pinMode(switchPin, INPUT_PULLUP);
 }
  
 void loop() {
@@ -44,5 +47,6 @@ void loop() {
     moveMotorsBackward();
     delay(3000);
     stopMotors();
+    detech_filament();
     delay(1000);
 }

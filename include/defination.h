@@ -25,18 +25,21 @@ float weight;
 #define pumpPin 9
 
 // Motor 1
-#define motorA1 2   // Motor A input 1
-#define motorA2 3   // Motor A input 2
+#define motorA1 2
+#define motorA2 3   
 
 // Motor 2
-#define motorB1 4   // Motor B input 1
-#define motorB2 5   // Motor B input 2
+#define motorB1 4   
+#define motorB2 5  
 
+// Motor 3
+#define motorC1 6
+#define motorC2 7 
 
+// Motor 4
+#define motorD1 8   
+#define motorD2 9 
 
-
-
-
-
-
-
+// Filament detector
+#define switchPin 2
+int switchState;
