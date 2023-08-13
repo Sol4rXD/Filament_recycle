@@ -102,7 +102,7 @@ void heatcoil() {
 
   delay(5000); // Adjust the time based on your heating needs
 
-  for (int dutyCycle = 255; dutyCycle >= 0; dutyCycle--) {
+  for (dutyCycle = 255; dutyCycle >= 0; dutyCycle--) {
     analogWrite(dimmerPin, dutyCycle);
     delay(10); 
   }
