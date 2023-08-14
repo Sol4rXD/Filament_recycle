@@ -1,17 +1,6 @@
 #include <Arduino.h>
 #include "techkit.h"
 
-extern void take_temp();
-extern void lcd_display(String x, String y);
-extern void take_weight();
-extern void pumpOn();
-extern void pumpOff();
-extern void moveMotorsForward();
-extern void moveMotorsBackward();
-extern void stopMotors();
-extern void detech_filament();
-extern void heatcoil();
-
 void setup() {
     Serial.begin(9600);
     Serial.println("System start");
@@ -54,7 +43,8 @@ void loop() {
     delay(3000);
     stopMotors();
     detech_filament();
-    heatcoil();
-    delay(1000);
+    heatcoil_up();
+    delay(5000);
+    heatcoil_down();
     statement();
 }

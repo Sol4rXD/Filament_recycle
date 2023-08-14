@@ -104,19 +104,18 @@ void detech_filament() {
   }
 }
 
-void heatcoil() {
+void heatcoil_up() {
   for (dutyCycle = 0; dutyCycle <= 255; dutyCycle++) {
     analogWrite(dimmerPin, dutyCycle);
     delay(10); 
   }
+}
 
-  delay(5000); // Adjust the time based on your heating needs
-
-  for (dutyCycle = 255; dutyCycle >= 0; dutyCycle--) {
+void heatcoil_down() {
+    for (dutyCycle = 255; dutyCycle >= 0; dutyCycle--) {
     analogWrite(dimmerPin, dutyCycle);
     delay(10); 
   }
-  delay(2000);
 }
 
 void statement() {
