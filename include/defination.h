@@ -3,8 +3,8 @@
 String payload;
 
 // LCD
-int text_number = 16;
-int line_number = 2;
+int text_number = 20;
+int line_number = 4;
 
 // Thermo couple
 #define ONE_WIRE_BUS_1 13
