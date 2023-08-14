@@ -43,8 +43,8 @@ void loop() {
     delay(3000);
     stopMotors();
     detech_filament();
-    heatcoil_up();
+    heatcoil_up(255);
     delay(5000);
-    heatcoil_down();
+    heatcoil_down(255);
     statement();
 }

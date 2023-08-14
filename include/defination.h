@@ -5,7 +5,8 @@ String payload;
 // Statements
 enum state {Start,
             Setup,
-            Normal};
+            Normal,
+            Stop};
 
 enum state current_state = Start;
 
@@ -51,7 +52,7 @@ float weight;
 #define switchPin 2
 int switchState;
 
-// Heat coil
+// Heat coil (Max temp is 255)
 #define dimmerPin 10
 int dutyCycle;
 
