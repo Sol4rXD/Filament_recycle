@@ -94,6 +94,12 @@ void stopMotors() {
   digitalWrite(motorD2, LOW);
 }
 
+void all_stop() {
+  pumpOff();
+  stopMotors();
+  current_state = Stop;
+}
+
 void detech_filament() {
   switchState = digitalRead(switchPin);
   if (switchState == LOW) {
@@ -117,75 +123,44 @@ void heatcoil_down(int x) {
   }
 }
 
-void all_stop() {
-  pumpOff();
-  stopMotors();
-  current_state = Stop;
-}
-
 void statement() {
-    static int previousState = -1; 
-    
     switch (current_state) {
         case Start:
-            if (previousState != Start) {
-                lcd.clear();
-                lcd_display("System start.....");
-            }
+            lcd_display("System start.....");
             if (digitalRead(ROTARY_BUTTON) == LOW) {
-                if (previousState != Setup) {
-                    lcd.clear();
-                    lcd_display("Going to Setup mode.........");
-                    delay(2000);
-                    previousState = Start;
-                    current_state = Setup;
-                }
+                lcd_display("Going to Setup mode.........");
+                delay(2500);
+                current_state = Setup;
             }
             break;
         case Setup:
-            if (previousState != Setup) {
-                lcd.clear();
-                lcd_display("Status: Setup",
-                            "Temp 1:" + String(temperature_1, 2) + " Temp 2:" + String(temperature_2, 2) + " Temp 3:" + String(temperature_3, 2),
-                            "Weight: " + String(weight, 2));
-            }
+            // Modify here
+            lcd_display("Status: Setup",
+                        "Temp 1:" + String(temperature_1, 2) + " Temp 2:" + String(temperature_2, 2) + " Temp 3:" + String(temperature_3, 2),
+                        "Weight: " + String(weight, 2));
             if (digitalRead(ROTARY_BUTTON) == LOW) {
-                if (previousState != Normal) {
-                    lcd.clear();
-                    lcd_display("Going to Normal mode.........");
-                    delay(2000);
-                    previousState = Setup;
-                    current_state = Normal;
-                }
+                lcd_display("Going to Normal mode.........");
+                delay(2000);
+                current_state = Normal;
             }
             break;
         case Normal:
-            if (previousState != Normal) {
-                lcd.clear();
-                lcd_display("Status: Normal",
-                            "Temp 1:" + String(temperature_1, 2) + " Temp 2:" + String(temperature_2, 2) + " Temp 3:" + String(temperature_3, 2),
-                            "Weight: " + String(weight, 2),
-                            "Good luck!");
-                previousState = Normal;
-            }
+            // Modify here
+            lcd_display("Status: Normal",
+                        "Temp 1:" + String(temperature_1, 2) + " Temp 2:" + String(temperature_2, 2) + " Temp 3:" + String(temperature_3, 2),
+                        "Weight: " + String(weight, 2),
+                        "Good luck!");
             break;
         case Stop:
-            if (previousState != Stop) {
-                lcd.clear();
-                lcd_display("Status: Stop",
-                            "Temp 1:" + String(temperature_1, 2) + " Temp 2:" + String(temperature_2, 2) + " Temp 3:" + String(temperature_3, 2),
-                            "Weight: " + String(weight, 2),
-                            "Press to go");
-                previousState = Stop;
-            }
+            // Modify here
+            lcd_display("Status: Stop",
+                        "Temp 1:" + String(temperature_1, 2) + " Temp 2:" + String(temperature_2, 2) + " Temp 3:" + String(temperature_3, 2),
+                        "Weight: " + String(weight, 2),
+                        "Press to go");
             if (digitalRead(ROTARY_BUTTON) == LOW) {
-                if (previousState != Normal) {
-                    lcd.clear();
-                    lcd_display("Going to normal mode........");
-                    delay(2000);
-                    previousState = Setup;
-                    current_state = Normal;
-                }
+                lcd_display("Going to normal mode........");
+                delay(2000);
+                current_state = Normal;
             }
             break;
         default:
