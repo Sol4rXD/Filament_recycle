@@ -2,6 +2,13 @@
 
 String payload;
 
+// Statements
+enum state {Start,
+            Setup,
+            Normal};
+
+enum state current_state = Start;
+
 // LCD
 int text_number = 20;
 int line_number = 4;
@@ -11,9 +18,9 @@ int line_number = 4;
 #define ONE_WIRE_BUS_2 14
 #define ONE_WIRE_BUS_3 15
 
-uint32_t temperature_1;
-uint32_t temperature_2;
-uint32_t temperature_3;
+float temperature_1;
+float temperature_2;
+float temperature_3;
 
 // Load cell
 #define DOUT_PIN  11
@@ -47,3 +54,10 @@ int switchState;
 // Heat coil
 #define dimmerPin 10
 int dutyCycle;
+
+// Rotary encoder
+#define ROTARY_CLK 2
+#define ROTARY_DT 3
+#define ROTARY_BUTTON 4
+
+
