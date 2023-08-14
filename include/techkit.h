@@ -119,7 +119,7 @@ void heatcoil() {
   delay(2000);
 }
 
-void lcd_statement() {
+void statement() {
   switch (current_state) {
     case Start:
       lcd_display("System start.....");

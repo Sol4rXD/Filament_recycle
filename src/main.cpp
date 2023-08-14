@@ -56,4 +56,5 @@ void loop() {
     detech_filament();
     heatcoil();
     delay(1000);
+    statement();
 }
