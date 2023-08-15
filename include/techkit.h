@@ -97,6 +97,7 @@ void stopMotors() {
 void all_stop() {
   pumpOff();
   stopMotors();
+  heatcoil_down(0);
   current_state = Stop;
 }
 
