@@ -55,6 +55,7 @@ int switchState;
 // Heat coil (Max temp is 255)
 #define dimmerPin 10
 int dutyCycle;
+int HEATCOIL_TEMP;
 
 // Rotary encoder
 #define ROTARY_CLK 2

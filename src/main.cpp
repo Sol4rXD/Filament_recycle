@@ -28,7 +28,7 @@ void setup() {
 }
  
 void loop() {
-    // Test all sensor
+    // Test all sensor (Ex)
     take_temp();
     delay(100);
     lcd.clear();
@@ -46,6 +46,6 @@ void loop() {
     detech_filament();
     heatcoil_up(255);
     delay(5000);
-    heatcoil_down(255);
+    heatcoil_down(0);
     statement();
 }

@@ -109,18 +109,21 @@ void detech_filament() {
   }
 }
 
+// Need to use this one first
 void heatcoil_up(int x) {
   for (dutyCycle = 0; dutyCycle <= x; dutyCycle++) {
     analogWrite(dimmerPin, dutyCycle);
     delay(10); 
   }
+  HEATCOIL_TEMP = x;
 }
 
 void heatcoil_down(int x) {
-    for (dutyCycle = x; dutyCycle >= 0; dutyCycle--) {
+    for (dutyCycle = HEATCOIL_TEMP; dutyCycle >= x; dutyCycle--) {
     analogWrite(dimmerPin, dutyCycle);
     delay(10); 
   }
+  HEATCOIL_TEMP = x;
 }
 
 void statement() {
