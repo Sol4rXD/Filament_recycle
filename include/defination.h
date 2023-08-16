@@ -49,7 +49,7 @@ float weight;
 #define motorD2 9 
 
 // Filament detector
-#define switchPin 2
+#define switchPin 3
 int switchState;
 
 // Heat coil (Max temp is 255)
