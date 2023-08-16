@@ -103,7 +103,7 @@ void all_stop() {
 void detech_filament() {
   switchState = digitalRead(switchPin);
   if (switchState == LOW) {
-    Serial.println("Switch is pressed"); 
+    Serial.println("Filament in"); 
   } else {
     all_stop(); 
   }
