@@ -9,8 +9,10 @@ void setup() {
     thermo_2.begin();
     thermo_3.begin();
 
-    lcd.begin(text_number, line_number);
+    lcd.init();
+    lcd.init();
     lcd.backlight();
+    lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("System start");
 
@@ -33,6 +35,7 @@ void loop() {
     delay(100);
     lcd.clear();
     lcd_display("Test 1", "Test 2", "Test 3", "Test 4");
+    delay(2000);
     delay(100);
     take_weight();
     pumpOn();
@@ -45,7 +48,7 @@ void loop() {
     stopMotors();
     detech_filament();
     heatcoil_up(255);
-    delay(5000);
+    delay(2000);
     heatcoil_down(0);
     statement();
 }

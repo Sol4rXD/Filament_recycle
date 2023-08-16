@@ -11,11 +11,11 @@ enum state {Start,
 enum state current_state = Start;
 
 // LCD
-int text_number = 20;
-int line_number = 4;
+uint8_t text_number = 20;
+uint8_t line_number = 4;
 
 // Thermo couple
-#define ONE_WIRE_BUS_1 13
+#define ONE_WIRE_BUS_1 3
 #define ONE_WIRE_BUS_2 14
 #define ONE_WIRE_BUS_3 15
 
