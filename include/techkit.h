@@ -94,22 +94,6 @@ void stopMotors() {
   digitalWrite(motorD2, LOW);
 }
 
-void all_stop() {
-  pumpOff();
-  stopMotors();
-  heatcoil_down(0);
-  current_state = Stop;
-}
-
-void detech_filament() {
-  switchState = digitalRead(switchPin);
-  if (switchState == LOW) {
-    Serial.println("Filament in"); 
-  } else {
-    all_stop(); 
-  }
-}
-
 // Need to use this one first
 void heatcoil_up(int x) {
   for (dutyCycle = 0; dutyCycle <= x; dutyCycle++) {
@@ -125,6 +109,22 @@ void heatcoil_down(int x) {
     delay(10); 
   }
   HEATCOIL_TEMP = x;
+}
+
+void all_stop() {
+  pumpOff();
+  stopMotors();
+  heatcoil_down(0);
+  current_state = Stop;
+}
+
+void detech_filament() {
+  switchState = digitalRead(switchPin);
+  if (switchState == LOW) {
+    Serial.println("Filament in"); 
+  } else {
+    all_stop(); 
+  }
 }
 
 void statement() {
