@@ -6,6 +6,9 @@
 #include "HX711.h"
 #include <Rotary.h>
 #include "defination.h"
+#include "smartdelay.h"
+
+Millis timer_1(1000);
 
 // Thermo couple
 OneWire oneWire_1(ONE_WIRE_BUS_1);
@@ -144,11 +147,9 @@ void all_operations() {
             break;
         case Setup:
             // Modify here
-            static unsigned long timer = millis();
-            if (millis() - timer > 1000) {
+            if (timer_1) {
               take_temp();
               take_weight();
-              timer = millis();
             }
             Serial.println("Status: Setup");
             lcd_display("Status: Setup",
@@ -165,10 +166,9 @@ void all_operations() {
             }
             break;
         case Normal:
-            if (millis() - timer > 1000) {
+            if (timer_1) {
               take_temp();
               take_weight();
-              timer = millis();
             }
             Serial.println("Status: Normal");
             lcd_display("Status: Normal",
@@ -186,10 +186,9 @@ void all_operations() {
             break;
         case Stop:
             // Modify here
-            if (millis() - timer > 1000) {
+            if (timer_1) {
               take_temp();
               take_weight();
-              timer = millis();
             }
             Serial.println("Status: Stop");
             lcd_display("Status: Stop",
