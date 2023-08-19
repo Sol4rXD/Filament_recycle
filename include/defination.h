@@ -24,8 +24,8 @@ float temperature_2;
 float temperature_3;
 
 // Load cell
-#define DOUT_PIN  11
-#define SCK_PIN   12
+#define DOUT_PIN  5
+#define SCK_PIN   6
 
 float weight;
 

@@ -128,7 +128,7 @@ void detech_filament() {
   }
 }
 
-void statement() {
+void all_operations() {
     switch (current_state) {
         case Start:
             lcd_display("System start.....","Press to go!");
@@ -147,13 +147,14 @@ void statement() {
             static unsigned long timer = millis();
             if (millis() - timer > 1000) {
               take_temp();
+              take_weight();
               timer = millis();
             }
             Serial.println("Status: Setup");
             lcd_display("Status: Setup",
                         "Temperature: " + String(temperature_1, 2),
-                        "Weight: " + String(weight, 2),
-                        "Press to normal");
+                        "Weight: " + String(weight),
+                        "Hold to normal");
             if (digitalRead(ROTARY_BUTTON) == LOW) {
                 Serial.println("Going to Normal mode.........");
                 lcd.clear();
@@ -166,13 +167,14 @@ void statement() {
         case Normal:
             if (millis() - timer > 1000) {
               take_temp();
+              take_weight();
               timer = millis();
             }
             Serial.println("Status: Normal");
             lcd_display("Status: Normal",
                         "Temperature: " + String(temperature_1, 2),
-                        "Weight: " + String(weight, 2),
-                        "Press to stop");
+                        "Weight: " + String(weight),
+                        "Hold to stop");
             if (digitalRead(ROTARY_BUTTON) == LOW) {
                 Serial.println("Going to stop........");
                 lcd.clear();
@@ -186,17 +188,18 @@ void statement() {
             // Modify here
             if (millis() - timer > 1000) {
               take_temp();
+              take_weight();
               timer = millis();
             }
             Serial.println("Status: Stop");
             lcd_display("Status: Stop",
                         "Temperature:" + String(temperature_1, 2),
-                        "Weight: " + String(weight, 2),
-                        "Press to go");
+                        "Weight: " + String(weight),
+                        "Hold to go");
             if (digitalRead(ROTARY_BUTTON) == LOW) {
-                // Serial.println("Going to normal mode........");
+                Serial.println("Going to normal mode........");
                 lcd.clear();
-                lcd_display("Going back to normal mode........");
+                lcd_display("Going back to normal...");
                 delay(2000);
                 lcd.clear();
                 current_state = Normal;
