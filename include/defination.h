@@ -62,4 +62,7 @@ int HEATCOIL_TEMP;
 #define ROTARY_DT 3
 #define ROTARY_BUTTON 4
 
+unsigned long buttonPressStartTime = 0;
+bool stopConfirmation = false;
+
 

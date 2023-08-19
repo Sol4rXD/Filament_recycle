@@ -131,40 +131,74 @@ void detech_filament() {
 void statement() {
     switch (current_state) {
         case Start:
-            lcd_display("System start.....");
+            lcd_display("System start.....","Press to go!");
+            Serial.println("System start.....");
             if (digitalRead(ROTARY_BUTTON) == LOW) {
+                lcd.clear();
                 lcd_display("Going to Setup mode.........");
+                Serial.println("Going to Setup mode.........");
                 delay(2500);
+                lcd.clear();
                 current_state = Setup;
             }
             break;
         case Setup:
             // Modify here
+            static unsigned long timer = millis();
+            if (millis() - timer > 1000) {
+              take_temp();
+              timer = millis();
+            }
+            Serial.println("Status: Setup");
             lcd_display("Status: Setup",
-                        "Temp 1:" + String(temperature_1, 2) + " Temp 2:" + String(temperature_2, 2) + " Temp 3:" + String(temperature_3, 2),
-                        "Weight: " + String(weight, 2));
+                        "Temperature: " + String(temperature_1, 2),
+                        "Weight: " + String(weight, 2),
+                        "Press to normal");
             if (digitalRead(ROTARY_BUTTON) == LOW) {
+                Serial.println("Going to Normal mode.........");
+                lcd.clear();
                 lcd_display("Going to Normal mode.........");
                 delay(2000);
+                lcd.clear();
                 current_state = Normal;
             }
             break;
         case Normal:
-            // Modify here
+            if (millis() - timer > 1000) {
+              take_temp();
+              timer = millis();
+            }
+            Serial.println("Status: Normal");
             lcd_display("Status: Normal",
-                        "Temp 1:" + String(temperature_1, 2) + " Temp 2:" + String(temperature_2, 2) + " Temp 3:" + String(temperature_3, 2),
+                        "Temperature: " + String(temperature_1, 2),
                         "Weight: " + String(weight, 2),
-                        "Good luck!");
+                        "Press to stop");
+            if (digitalRead(ROTARY_BUTTON) == LOW) {
+                Serial.println("Going to stop........");
+                lcd.clear();
+                lcd_display("Going to stop........"); 
+                delay(3000);
+                lcd.clear();
+                current_state = Stop;
+            }
             break;
         case Stop:
             // Modify here
+            if (millis() - timer > 1000) {
+              take_temp();
+              timer = millis();
+            }
+            Serial.println("Status: Stop");
             lcd_display("Status: Stop",
-                        "Temp 1:" + String(temperature_1, 2) + " Temp 2:" + String(temperature_2, 2) + " Temp 3:" + String(temperature_3, 2),
+                        "Temperature:" + String(temperature_1, 2),
                         "Weight: " + String(weight, 2),
                         "Press to go");
             if (digitalRead(ROTARY_BUTTON) == LOW) {
-                lcd_display("Going to normal mode........");
+                // Serial.println("Going to normal mode........");
+                lcd.clear();
+                lcd_display("Going back to normal mode........");
                 delay(2000);
+                lcd.clear();
                 current_state = Normal;
             }
             break;
