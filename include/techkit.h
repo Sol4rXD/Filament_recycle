@@ -57,11 +57,13 @@ void take_weight() {
 }
 
 void pumpOn() {
-  digitalWrite(pumpPin, HIGH); 
+  digitalWrite(pumpPinA, HIGH); 
+  digitalWrite(pumpPinB, LOW);
 }
 
 void pumpOff() {
-  digitalWrite(pumpPin, LOW); 
+  digitalWrite(pumpPinA, LOW); 
+  digitalWrite(pumpPinB, LOW); 
 }
 
 void moveMotorsForward(int pwmValue) {
