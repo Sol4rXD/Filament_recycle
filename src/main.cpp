@@ -18,8 +18,8 @@ void setup() {
 
     scale.begin(DOUT_PIN, SCK_PIN);
 
-    pinMode(pumpPin, OUTPUT);
-    pumpOff();
+    pinMode(pumpPinA, OUTPUT);
+    pinMode(pumpPinB, OUTPUT);
 
     pinMode(switchPin, INPUT_PULLUP);
 
@@ -27,8 +27,24 @@ void setup() {
     analogWrite(dimmerPin, 0);
 
     pinMode(ROTARY_BUTTON, INPUT_PULLUP);
+
+    pinMode(motorA_pwm, OUTPUT);
+    pinMode(motorB_pwm, OUTPUT);
+    pinMode(motorC_pwm, OUTPUT);
+    pinMode(motorD_pwm, OUTPUT);
+
+    pinMode(motorA1, OUTPUT);
+    pinMode(motorA2, OUTPUT);
+    pinMode(motorB1, OUTPUT);
+    pinMode(motorB2, OUTPUT);
+    pinMode(motorC1, OUTPUT);
+    pinMode(motorC2, OUTPUT);
+    pinMode(motorD1, OUTPUT);
+    pinMode(motorD2, OUTPUT);
 }
- 
+
 void loop() {
-    all_operations();
+    // all_operations();
+    pumpOn();
+    moveMotorsForward(255);
 }
