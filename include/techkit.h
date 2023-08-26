@@ -64,13 +64,20 @@ void pumpOff() {
   digitalWrite(pumpPin, LOW); 
 }
 
-void moveMotorsForward() {
+void moveMotorsForward(int pwmValue) {
+  analogWrite(motorA_pwm, pwmValue);
   digitalWrite(motorA1, HIGH);
   digitalWrite(motorA2, LOW);
+  
+  analogWrite(motorB_pwm, pwmValue);
   digitalWrite(motorB1, HIGH);
   digitalWrite(motorB2, LOW);
-  digitalWrite(motorC1, HIGH);
+  
+  analogWrite(motorC_pwm, pwmValue);
+  digitalWrite(motorC1, HIGH); 
   digitalWrite(motorC2, LOW);
+  
+  analogWrite(motorD_pwm, pwmValue);
   digitalWrite(motorD1, HIGH);
   digitalWrite(motorD2, LOW);
 }
@@ -98,16 +105,31 @@ void stopMotors() {
 }
 
 // Need to use this one first
-void heatcoil_up(int x) {
-  for (dutyCycle = 0; dutyCycle <= x; dutyCycle++) {
-    analogWrite(dimmerPin, dutyCycle);
-    delay(10); 
+void heatcoil_up(int targetTemp) {
+  take_temp();  
+  
+  double currentTemperature = (temperature_1 + temperature_2 + temperature_3) / 3;
+  double error = targetTemp - currentTemperature;
+
+  if (abs(error) < tempTolerance) {
+    integral += error;
   }
-  HEATCOIL_TEMP = x;
+
+  integral = constrain(integral, -100, 100);  
+
+  double pidOutput = kp * error + ki * integral + kd * (error - prevError);
+  prevError = error;
+  
+  dutyCycle = constrain(dutyCycle + pidOutput, 0, maxDutyCycle);
+  analogWrite(dimmerPin, dutyCycle);
+
+  delay(10);  
+
+  HEATCOIL_TEMP = currentTemperature;
 }
 
 void heatcoil_down(int x) {
-    for (dutyCycle = HEATCOIL_TEMP; dutyCycle >= x; dutyCycle--) {
+  for (dutyCycle = HEATCOIL_TEMP; dutyCycle >= x; dutyCycle--) {
     analogWrite(dimmerPin, dutyCycle);
     delay(10); 
   }
@@ -124,7 +146,7 @@ void all_stop() {
 void detech_filament() {
   switchState = digitalRead(switchPin);
   if (switchState == LOW) {
-    // all_stop();
+    all_stop();
     Serial.println("Filament is not in");  
   } else {
     Serial.println("Filament is in");  
@@ -169,6 +191,7 @@ void all_operations() {
             if (timer_1) {
               take_temp();
               take_weight();
+              detech_filament();
             }
             Serial.println("Status: Normal");
             lcd_display("Status: Normal",
@@ -208,10 +231,5 @@ void all_operations() {
             break;
     }
 }
-
-
-
-
-
 
 
