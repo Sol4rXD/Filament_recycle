@@ -44,7 +44,8 @@ float temperature_3;
 float weight;
 
 // Pump
-#define pumpPin 1
+#define pumpPinA 16
+#define pumpPinB 18
 
 // Motor Pwm
 #define motorA_pwm 2
