@@ -2,6 +2,20 @@
 
 String payload;
 
+// PID
+const int targetTemperature = 100;  
+const int tempTolerance = 2;        
+const int maxDutyCycle = 255;       
+
+// PID constants
+const double kp = 1.0;  
+const double ki = 0.1;     
+const double kd = 0.01;  
+
+int dutyCycle = 0;
+int prevError = 0;
+int integral = 0;
+
 // Statements
 enum state {Start,
             Setup,
@@ -32,21 +46,27 @@ float weight;
 // Pump
 #define pumpPin 1
 
+// Motor Pwm
+#define motorA_pwm 2
+#define motorB_pwm 3 
+#define motorC_pwm 6
+#define motorD_pwm 7
+
 // Motor 1
-#define motorA1 2
-#define motorA2 3   
+#define motorA1 31
+#define motorA2 29  
 
 // Motor 2
-#define motorB1 4   
-#define motorB2 5  
+#define motorB1 27  
+#define motorB2 25 
 
 // Motor 3
-#define motorC1 6
-#define motorC2 7 
+#define motorC1 30
+#define motorC2 28
 
 // Motor 4
-#define motorD1 8   
-#define motorD2 9 
+#define motorD1 26  
+#define motorD2 24
 
 // Filament detector
 #define switchPin 3
@@ -54,7 +74,6 @@ int switchState;
 
 // Heat coil (Max temp is 255)
 #define dimmerPin 10
-int dutyCycle;
 int HEATCOIL_TEMP;
 
 // Rotary encoder
