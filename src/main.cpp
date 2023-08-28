@@ -41,10 +41,11 @@ void setup() {
     pinMode(motorC2, OUTPUT);
     pinMode(motorD1, OUTPUT);
     pinMode(motorD2, OUTPUT);
+
+    myservo.attach(9);  
+    myservo.write(90); 
 }
 
 void loop() {
-    // all_operations();
-    pumpOn();
-    moveMotorsForward(255);
+    all_operations();
 }
