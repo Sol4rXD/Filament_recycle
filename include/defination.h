@@ -29,13 +29,18 @@ uint8_t text_number = 20;
 uint8_t line_number = 4;
 
 // Thermo couple
-#define ONE_WIRE_BUS_1 3
-#define ONE_WIRE_BUS_2 14
+#define ONE_WIRE_BUS_1 11
+#define ONE_WIRE_BUS_2 9
 #define ONE_WIRE_BUS_3 15
 
 float temperature_1;
 float temperature_2;
 float temperature_3;
+float temperature_av;
+
+float prevTemperature_1;
+float prevTemperature_2;
+float prevTemperature_3;
 
 // Load cell
 #define DOUT_PIN  5
@@ -44,8 +49,8 @@ float temperature_3;
 float weight;
 
 // Pump
-#define pumpPinA 16
-#define pumpPinB 18
+#define pumpPinA 10
+#define pumpPinB 8
 
 // Motor Pwm
 #define motorA_pwm 2
@@ -70,7 +75,7 @@ float weight;
 #define motorD2 24
 
 // Filament detector
-#define switchPin 3
+#define switchPin 16
 int switchState;
 
 // Heat coil (Max temp is 255)
