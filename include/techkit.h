@@ -7,6 +7,7 @@
 #include <Rotary.h>
 #include "defination.h"
 #include "smartdelay.h"
+#include <Servo.h>
 
 Millis timer_1(1000);
 
@@ -29,14 +30,51 @@ HX711 scale;
 // Rotary encoder
 Rotary encoder(ROTARY_CLK, ROTARY_DT);
 
+// Servo
+Servo myservo;
+
 void take_temp() {
     thermo_1.requestTemperatures(); 
-    temperature_1 = thermo_1.getTempCByIndex(0);
+    double newTemp1 = thermo_1.getTempCByIndex(0);
+    if (newTemp1 >= 0) {
+        temperature_1 = newTemp1;
+    }
+    
     thermo_2.requestTemperatures(); 
-    temperature_2 = thermo_2.getTempCByIndex(0);
+    double newTemp2 = thermo_2.getTempCByIndex(0);
+    if (newTemp2 >= 0) {
+        temperature_2 = newTemp2;
+    }
+    
     thermo_3.requestTemperatures(); 
-    temperature_3 = thermo_3.getTempCByIndex(0);
+    double newTemp3 = thermo_3.getTempCByIndex(0);
+    if (newTemp3 >= 0) {
+        temperature_3 = newTemp3;
+    }
+    
+    if (temperature_1 < 0) {
+        temperature_1 = prevTemperature_1;
+    }
+    
+    if (temperature_2 < 0) {
+        temperature_2 = prevTemperature_2;
+    }
+    
+    if (temperature_3 < 0) {
+        temperature_3 = prevTemperature_3;
+    }
+    
+    temperature_av = (temperature_1 + temperature_2 + temperature_3) / 3;
+    
+    prevTemperature_1 = temperature_1;
+    prevTemperature_2 = temperature_2;
+    prevTemperature_3 = temperature_3;
+    
+    Serial.println(temperature_1);
+    Serial.println(temperature_2);
+    Serial.println(temperature_3);
 }
+
 
 void lcd_display(String w = "", String x = "", String y = "", String z = "") {
     lcd.setCursor(0, 0);
@@ -53,7 +91,7 @@ void lcd_display(String w = "", String x = "", String y = "", String z = "") {
 }
 
 void take_weight() {
-    weight = scale.get_units();
+  weight = scale.get_units();
 }
 
 void pumpOn() {
@@ -109,8 +147,33 @@ void stopMotors() {
 // Need to use this one first
 void heatcoil_up(int targetTemp) {
   take_temp();  
-  
-  double currentTemperature = (temperature_1 + temperature_2 + temperature_3) / 3;
+
+  double currentTemperature = 0;
+
+  if (temperature_1 >= 0) {
+    currentTemperature += temperature_1;
+  } else {
+    currentTemperature += prevTemperature_1;
+  }
+
+  if (temperature_2 >= 0) {
+    currentTemperature += temperature_2;
+  } else {
+    currentTemperature += prevTemperature_2;
+  }
+
+  if (temperature_3 >= 0) {
+    currentTemperature += temperature_3;
+  } else {
+    currentTemperature += prevTemperature_3;
+  }
+
+  currentTemperature /= 3; 
+
+  prevTemperature_1 = temperature_1;
+  prevTemperature_2 = temperature_2;
+  prevTemperature_3 = temperature_3;
+
   double error = targetTemp - currentTemperature;
 
   if (abs(error) < tempTolerance) {
@@ -142,17 +205,31 @@ void all_stop() {
   pumpOff();
   stopMotors();
   heatcoil_down(0);
+  lcd.clear();
+  lcd_display("Check filament");
+  delay(3000);
+  lcd.clear();
+  delay(500);
   current_state = Stop;
 }
 
 void detech_filament() {
   switchState = digitalRead(switchPin);
   if (switchState == LOW) {
-    all_stop();
     Serial.println("Filament is not in");  
+    all_stop();
   } else {
     Serial.println("Filament is in");  
   }
+}
+
+void servo_spin() {
+  myservo.write(45); 
+  delay(5000); 
+  myservo.write(90); 
+  delay(5000); 
+  myservo.write(135); 
+  delay(5000); 
 }
 
 void all_operations() {
@@ -173,12 +250,11 @@ void all_operations() {
             // Modify here
             if (timer_1) {
               take_temp();
-              take_weight();
             }
-            Serial.println("Status: Setup");
+            heatcoil_up(240);
+            pumpOn();
             lcd_display("Status: Setup",
-                        "Temperature: " + String(temperature_1, 2),
-                        "Weight: " + String(weight),
+                        "Temperature: " + String(temperature_av, 2),
                         "Hold to normal");
             if (digitalRead(ROTARY_BUTTON) == LOW) {
                 Serial.println("Going to Normal mode.........");
@@ -192,33 +268,32 @@ void all_operations() {
         case Normal:
             if (timer_1) {
               take_temp();
-              take_weight();
-              detech_filament();
             }
-            Serial.println("Status: Normal");
+            // heatcoil_up(240);
+            pumpOn();
+            moveMotorsForward(255);
             lcd_display("Status: Normal",
-                        "Temperature: " + String(temperature_1, 2),
-                        "Weight: " + String(weight),
+                        "Temperature: " + String(temperature_av, 2),
                         "Hold to stop");
             if (digitalRead(ROTARY_BUTTON) == LOW) {
-                Serial.println("Going to stop........");
                 lcd.clear();
                 lcd_display("Going to stop........"); 
                 delay(3000);
                 lcd.clear();
                 current_state = Stop;
             }
+            detech_filament();
             break;
         case Stop:
             // Modify here
             if (timer_1) {
               take_temp();
-              take_weight();
             }
-            Serial.println("Status: Stop");
+            stopMotors();
+            pumpOff();
             lcd_display("Status: Stop",
-                        "Temperature:" + String(temperature_1, 2),
-                        "Weight: " + String(weight),
+                        "Temperature:" + String(temperature_av, 2),
+                        "Check filament",
                         "Hold to go");
             if (digitalRead(ROTARY_BUTTON) == LOW) {
                 Serial.println("Going to normal mode........");
