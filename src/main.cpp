@@ -28,10 +28,10 @@ void setup() {
 
     pinMode(ROTARY_BUTTON, INPUT_PULLUP);
 
-    pinMode(motorA_pwm, OUTPUT);
-    pinMode(motorB_pwm, OUTPUT);
-    pinMode(motorC_pwm, OUTPUT);
-    pinMode(motorD_pwm, OUTPUT);
+    // pinMode(motorA_pwm, OUTPUT);
+    // pinMode(motorB_pwm, OUTPUT);
+    // pinMode(motorC_pwm, OUTPUT);
+    // pinMode(motorD_pwm, OUTPUT);
 
     pinMode(motorA1, OUTPUT);
     pinMode(motorA2, OUTPUT);
@@ -42,8 +42,15 @@ void setup() {
     pinMode(motorD1, OUTPUT);
     pinMode(motorD2, OUTPUT);
 
-    myservo.attach(9);  
-    myservo.write(90); 
+    myservo.attach(Servo_PIN);  
+
+    pinMode(magneticPin, INPUT);
+
+    pinMode(dimmerPin, INPUT_PULLUP);
+    pinMode(dimmerPWM_1, OUTPUT);
+    pinMode(dimmerPWM_2, OUTPUT);
+    pinMode(dimmerPWM_3, OUTPUT);
+    attachInterrupt(digitalPinToInterrupt(dimmerPin), zeroCrossing, RISING);
 }
 
 void loop() {
