@@ -79,8 +79,13 @@ float weight;
 int switchState;
 
 // Heat coil (Max temp is 255)
-#define dimmerPin 10
-int HEATCOIL_TEMP;
+#define dimmerPin 2
+#define dimmerPWM_1 6
+#define dimmerPWM_2 7
+#define dimmerPWM_3 13
+
+int pwmValue = 255;   
+int HEATCOIL_TEMP; 
 
 // Rotary encoder
 #define ROTARY_CLK 2
@@ -88,6 +93,13 @@ int HEATCOIL_TEMP;
 #define ROTARY_BUTTON 4
 
 unsigned long buttonPressStartTime = 0;
-bool stopConfirmation = false;
+bool stopConfirmation = false; 
+
+// Magnetic Hall sensor
+#define magneticPin 5
+
+// Servo
+const int Servo_PIN = 5;
+
 
 
