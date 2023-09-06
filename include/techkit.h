@@ -10,6 +10,7 @@
 #include <Servo.h>
 
 Millis timer_1(1000);
+Millis timer_100ms(100);
 
 // Thermo couple
 OneWire oneWire_1(ONE_WIRE_BUS_1);
@@ -70,9 +71,13 @@ void take_temp() {
     prevTemperature_2 = temperature_2;
     prevTemperature_3 = temperature_3;
     
+    Serial.println("temperature is: ");
     Serial.println(temperature_1);
     Serial.println(temperature_2);
     Serial.println(temperature_3);
+    Serial.println("temperature av :");
+    Serial.println(temperature_av);
+    Serial.println("---------------------");
 }
 
 
@@ -104,20 +109,20 @@ void pumpOff() {
   digitalWrite(pumpPinB, LOW); 
 }
 
-void moveMotorsForward(int pwmValue) {
-  analogWrite(motorA_pwm, pwmValue);
+void moveMotorsForward() {
+  // analogWrite(motorA_pwm, pwmValue);
   digitalWrite(motorA1, HIGH);
   digitalWrite(motorA2, LOW);
   
-  analogWrite(motorB_pwm, pwmValue);
+  // analogWrite(motorB_pwm, pwmValue);
   digitalWrite(motorB1, HIGH);
   digitalWrite(motorB2, LOW);
   
-  analogWrite(motorC_pwm, pwmValue);
+  // analogWrite(motorC_pwm, pwmValue);
   digitalWrite(motorC1, HIGH); 
   digitalWrite(motorC2, LOW);
   
-  analogWrite(motorD_pwm, pwmValue);
+  // analogWrite(motorD_pwm, pwmValue);
   digitalWrite(motorD1, HIGH);
   digitalWrite(motorD2, LOW);
 }
@@ -148,33 +153,7 @@ void stopMotors() {
 void heatcoil_up(int targetTemp) {
   take_temp();  
 
-  double currentTemperature = 0;
-
-  if (temperature_1 >= 0) {
-    currentTemperature += temperature_1;
-  } else {
-    currentTemperature += prevTemperature_1;
-  }
-
-  if (temperature_2 >= 0) {
-    currentTemperature += temperature_2;
-  } else {
-    currentTemperature += prevTemperature_2;
-  }
-
-  if (temperature_3 >= 0) {
-    currentTemperature += temperature_3;
-  } else {
-    currentTemperature += prevTemperature_3;
-  }
-
-  currentTemperature /= 3; 
-
-  prevTemperature_1 = temperature_1;
-  prevTemperature_2 = temperature_2;
-  prevTemperature_3 = temperature_3;
-
-  double error = targetTemp - currentTemperature;
+  double error = targetTemp - temperature_av;
 
   if (abs(error) < tempTolerance) {
     integral += error;
@@ -186,11 +165,12 @@ void heatcoil_up(int targetTemp) {
   prevError = error;
   
   dutyCycle = constrain(dutyCycle + pidOutput, 0, maxDutyCycle);
-  analogWrite(dimmerPin, dutyCycle);
+  analogWrite(dimmerPWM_1, dutyCycle);
+  analogWrite(dimmerPWM_2, dutyCycle);
 
   delay(10);  
 
-  HEATCOIL_TEMP = currentTemperature;
+  HEATCOIL_TEMP = temperature_av;
 }
 
 void heatcoil_down(int x) {
@@ -201,10 +181,38 @@ void heatcoil_down(int x) {
   HEATCOIL_TEMP = x;
 }
 
+// MAX is 255
+void heatcoil_up_test(int x) {
+  for (int dutyCycle = HEATCOIL_TEMP; dutyCycle <= x; dutyCycle++) {
+    analogWrite(dimmerPWM_1, dutyCycle);
+    delay(10); 
+  }
+  HEATCOIL_TEMP = x;
+}
+
+void zeroCrossing() {
+  static unsigned long lastInterruptTime = 0;
+  unsigned long currentTime = micros();
+
+  if (currentTime - lastInterruptTime >= 800) {
+    lastInterruptTime = currentTime;
+
+    unsigned long delayTime = (pwmValue > 0) ? pwmValue * 2 : 0;
+
+    delayMicroseconds(delayTime);
+    digitalWrite(dimmerPWM_1, HIGH);
+  }
+}
+
+void stop_servo() {
+  myservo.detach(); 
+}
+
 void all_stop() {
   pumpOff();
   stopMotors();
   heatcoil_down(0);
+  stop_servo();
   lcd.clear();
   lcd_display("Check filament");
   delay(3000);
@@ -219,28 +227,44 @@ void detech_filament() {
     Serial.println("Filament is not in");  
     all_stop();
   } else {
-    Serial.println("Filament is in");  
   }
 }
 
 void servo_spin() {
-  myservo.write(45); 
-  delay(5000); 
-  myservo.write(90); 
-  delay(5000); 
-  myservo.write(135); 
-  delay(5000); 
+  myservo.writeMicroseconds(1375);
+}
+
+// Not finish
+void magnetic_check() {
+  if(digitalRead(magneticPin) == HIGH) {
+    // Do something
+  }
+  else{
+    // Do something
+  }
 }
 
 void all_operations() {
     switch (current_state) {
         case Start:
             lcd_display("System start.....","Press to go!");
-            Serial.println("System start.....");
+            // Serial.println("System start.....");
+            if (Serial.available() > 0) {
+                String input = Serial.readString();
+                input.trim(); 
+                if (input.toInt() == 1) {
+                    Serial.println("Changing to Normal mode...");
+                    lcd.clear();
+                    lcd_display("Changing to Normal mode...");
+                    delay(2000);
+                    lcd.clear();
+                    current_state = Setup;
+                }
+            }
             if (digitalRead(ROTARY_BUTTON) == LOW) {
                 lcd.clear();
                 lcd_display("Going to Setup mode.........");
-                Serial.println("Going to Setup mode.........");
+                // Serial.println("Going to Setup mode.........");
                 delay(2500);
                 lcd.clear();
                 current_state = Setup;
@@ -248,14 +272,27 @@ void all_operations() {
             break;
         case Setup:
             // Modify here
-            if (timer_1) {
+            if (timer_100ms) {
               take_temp();
             }
-            heatcoil_up(240);
+            heatcoil_up(250);
+            // moveMotorsForward();
             pumpOn();
             lcd_display("Status: Setup",
                         "Temperature: " + String(temperature_av, 2),
                         "Hold to normal");
+            if (Serial.available() > 0) {
+                String input = Serial.readString();
+                input.trim(); 
+                if (input.toInt() == 0) {
+                    Serial.println("Changing to Stop mode...");
+                    lcd.clear();
+                    lcd_display("Changing to Stop mode...");
+                    delay(2000);
+                    lcd.clear();
+                    current_state = Stop;
+                }
+            }
             if (digitalRead(ROTARY_BUTTON) == LOW) {
                 Serial.println("Going to Normal mode.........");
                 lcd.clear();
@@ -266,19 +303,32 @@ void all_operations() {
             }
             break;
         case Normal:
-            if (timer_1) {
+            if (timer_100ms) {
               take_temp();
             }
-            // heatcoil_up(240);
+            servo_spin();
+            heatcoil_up(250);
             pumpOn();
-            moveMotorsForward(255);
+            // moveMotorsForward();
             lcd_display("Status: Normal",
                         "Temperature: " + String(temperature_av, 2),
                         "Hold to stop");
+            if (Serial.available() > 0) {
+                String input = Serial.readString();
+                input.trim(); // Remove leading/trailing spaces
+                if (input.toInt() == 0) {
+                    Serial.println("Changing to Stop mode...");
+                    lcd.clear();
+                    lcd_display("Changing to Stop mode...");
+                    delay(2000);
+                    lcd.clear();
+                    current_state = Stop;
+                }
+            }
             if (digitalRead(ROTARY_BUTTON) == LOW) {
                 lcd.clear();
                 lcd_display("Going to stop........"); 
-                delay(3000);
+                delay(1000);
                 lcd.clear();
                 current_state = Stop;
             }
@@ -291,10 +341,23 @@ void all_operations() {
             }
             stopMotors();
             pumpOff();
+            heatcoil_down(0);
             lcd_display("Status: Stop",
                         "Temperature:" + String(temperature_av, 2),
                         "Check filament",
                         "Hold to go");
+            if (Serial.available() > 0) {
+                String input = Serial.readString();
+                input.trim(); // Remove leading/trailing spaces
+                if (input.toInt() == 1) {
+                    Serial.println("Changing to Normal mode...");
+                    lcd.clear();
+                    lcd_display("Changing to Normal mode...");
+                    delay(2000);
+                    lcd.clear();
+                    current_state = Normal;
+                }
+            }
             if (digitalRead(ROTARY_BUTTON) == LOW) {
                 Serial.println("Going to normal mode........");
                 lcd.clear();
